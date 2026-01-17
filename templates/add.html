@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acquire New Specimen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        /* 复用之前的 CSS 变量 */
+        :root { --bg-paper: #f4ecd8; --ink: #2c2c2c; }
+        
+        body {
+            background-color: var(--bg-paper);
+            color: var(--ink);
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* 页面入场动画 */
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 3rem;
+            margin-bottom: 40px;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* --- 自定义文件上传按钮 --- */
+        .file-upload {
+            border: 2px dashed var(--ink);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+            position: relative;
+            background: rgba(255,255,255,0.2);
+            display: block; /* 确保它是块级元素 */
+        }
+        
+        .file-upload:hover {
+            background: rgba(255,255,255,0.5);
+            border-style: solid;
+        }
+
+        input[type="file"] { display: none; }
+
+        /* --- 修复后的备注输入框 --- */
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            /* 关键修复：删除了 border-bottom，只保留背景渐变产生的横线 */
+            color: var(--ink);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            resize: none;
+            outline: none;
+            padding: 10px 0;
+            
+            /* 利用渐变生成横格纸效果 */
+            background-image: linear-gradient(transparent 95%, var(--ink) 95%);
+            background-size: 100% 40px; /* 行高 */
+            line-height: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* --- 提交按钮 --- */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--ink);
+            color: var(--bg-paper);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .back-link {
+            margin-top: 20px;
+            text-decoration: none;
+            color: var(--ink);
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* --- 动画关键帧 --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 加载遮罩层 (Loading Overlay) --- */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-paper);
+            z-index: 999;
+            display: none; /* 默认隐藏 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            border-top-color: var(--ink);
+            border-bottom-color: var(--ink);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 1.5rem;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">The Tailor is cutting the pattern...</div>
+    </div>
+
+    <h1>Archive New Item</h1>
+
+    <div class="form-container">
+        <form id="add-form" action="/add" method="post" enctype="multipart/form-data">
+            
+            <label for="file" class="file-upload" id="drop-zone">
+                <span id="file-label">Click to Select Photograph</span>
+            </label>
+            <input type="file" name="file" id="file" accept="image/*" required onchange="updateFileName()">
+            
+            <textarea name="note" rows="3" placeholder="Enter Curator's Remarks..."></textarea>
+            
+            <button type="submit" class="submit-btn" onclick="showLoader()">Permanent Archive</button>
+        </form>
+    </div>
+
+    <a href="/" class="back-link">Discard & Return</a>
+
+    <script>
+        function updateFileName() {
+            const input = document.getElementById('file');
+            const label = document.getElementById('file-label');
+            if (input.files && input.files[0]) {
+                label.textContent = "Selected: " + input.files[0].name;
+                label.style.fontStyle = 'italic';
+            }
+        }
+
+        function showLoader() {
+            const input = document.getElementById('file');
+            if (input.files && input.files.length > 0) {
+                document.getElementById('loader').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Ethereal Trousseau</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 核心配色 --- */
+        :root {
+            --bg-paper: #f4ecd8; /* 羊皮纸色 */
+            --ink: #2c2c2c;      /* 墨水黑 */
+            --border-heavy: 3px double var(--ink);
+        }
+
+        body {
+            background-color: var(--bg-paper);
+            color: var(--ink);
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+            padding: 0 0 100px 0; /* 底部留出导航栏高度 */
+            
+            /* 添加纸张纹理噪点 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            
+            /* 页面整体渐入 */
+            animation: pageIn 1s ease-out;
+        }
+
+        @keyframes pageIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        /* --- 顶部标题 --- */
+        header {
+            padding: 60px 20px 30px;
+            text-align: center;
+            border-bottom: 1px solid var(--ink);
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        /* 装饰性双线效果 */
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--ink);
+        }
+
+        h1 {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 3.5rem; /* 大号艺术字 */
+            margin: 0;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+        
+        .subtitle {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+
+        /* --- 衣服展示画廊 --- */
+        .gallery {
+            display: grid;
+            /* 响应式布局：手机一行2个，电脑自动适应 */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 单个展示框 */
+        .frame {
+            border: 1px solid var(--ink);
+            padding: 8px; /* 内衬留白 */
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            cursor: pointer;
+            
+            /* 初始状态：隐藏并下沉 (为了动画) */
+            opacity: 0;
+            transform: translateY(30px);
+            /* 应用入场动画 */
+            animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .frame:hover {
+            transform: translateY(-5px) !important; /* !important 覆盖动画结束状态 */
+            box-shadow: 4px 4px 0px rgba(44, 44, 44, 0.2);
+            border-color: var(--ink);
+        }
+
+        .frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+            /* 关键：正片叠底，让图片白色背景变透明，融入羊皮纸 */
+            mix-blend-mode: multiply; 
+            filter: sepia(0.15) contrast(1.05); /* 稍微做旧 */
+        }
+        
+        .frame-number {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-style: italic;
+            border-top: 1px solid rgba(44, 44, 44, 0.2);
+            padding-top: 5px;
+            font-family: 'Pinyon Script', cursive; /* 编号也用艺术字 */
+            font-size: 1.2rem;
+        }
+
+        /* --- 瀑布流动画 (Staggered Animation) --- */
+        @keyframes slideUpFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 为前12个元素设置递增的延迟，制造波浪感 */
+        .frame:nth-child(1) { animation-delay: 0.1s; }
+        .frame:nth-child(2) { animation-delay: 0.15s; }
+        .frame:nth-child(3) { animation-delay: 0.2s; }
+        .frame:nth-child(4) { animation-delay: 0.25s; }
+        .frame:nth-child(5) { animation-delay: 0.3s; }
+        .frame:nth-child(6) { animation-delay: 0.35s; }
+        .frame:nth-child(7) { animation-delay: 0.4s; }
+        .frame:nth-child(8) { animation-delay: 0.45s; }
+        .frame:nth-child(9) { animation-delay: 0.5s; }
+        .frame:nth-child(10) { animation-delay: 0.55s; }
+        .frame:nth-child(11) { animation-delay: 0.6s; }
+        .frame:nth-child(12) { animation-delay: 0.65s; }
+
+        /* --- 底部导航栏 --- */
+        .navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: var(--bg-paper);
+            border-top: var(--border-heavy);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            color: var(--ink);
+            font-weight: bold;
+            transition: opacity 0.2s;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            opacity: 0.6;
+        }
+
+        /* --- 修复后的 ADD 按钮样式 --- */
+        .nav-item.add-btn {
+            border: 1px solid var(--ink);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+    
+            position: relative; /* 关键：作为定位基准 */
+            display: block;     /* 确保是块级容器 */
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* 确保边框不影响尺寸计算 */ 
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.add-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 18px;        /* 十字的长短 */
+            height: 1.5px;      /* 线条粗细，1.5px 比较优雅，配合 Garamond */
+            background-color: var(--ink);
+            transform: translate(-50%, -50%); /* 绝对物理居中 */
+        }
+
+        .nav-item.add-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1.5px;       /* 线条粗细，保持一致 */
+            height: 18px;       /* 十字的长短 */
+            background-color: var(--ink);
+            transform: translate(-50%, -50%); /* 绝对物理居中 */
+        }
+
+        /* 鼠标悬停效果：轻微旋转和加粗 */
+        .nav-item.add-btn:hover {
+            transform: rotate(90deg); /* 有趣的交互：悬停时旋转 */
+            background-color: rgba(44, 44, 44, 0.05); /* 淡淡的背景色 */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The Ethereal Trousseau</h1>
+        <div class="subtitle">Digital Archive of Gowns</div>
+    </header>
+
+    <div class="gallery">
+        {% for item in clothes %}
+        <a href="/item/{{ item.id }}" style="text-decoration: none; color: inherit;">
+            <div class="frame">
+                <img src="{{ url_for('static', filename=item.image) }}" alt="garment" loading="lazy">
+                <div class="frame-number">No. {{ loop.index }}</div>
+            </div>
+        </a>
+        {% else %}
+        <div style="grid-column: 1 / -1; text-align: center; margin-top: 50px; opacity: 0.5; font-style: italic;">
+            The collection is currently empty.<br>Press "+" to archive your first specimen.
+        </div>
+        {% endfor %}
+    </div>
+
+    <nav class="navbar">
+        <a href="/" class="nav-item">Home</a>
+        <a href="/add" class="nav-item add-btn"></a>
+        <a href="/readme" class="nav-item">Readme</a>
+    </nav>
+
+</body>
+</html>

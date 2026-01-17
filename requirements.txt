@@ -1,0 +1,4 @@
+Flask
+rembg[cli]
+Pillow
+waitress
