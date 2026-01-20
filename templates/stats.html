@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Census & Oracle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-paper: #f4ecd8; --ink: #2c2c2c; }
+        body {
+            background-color: var(--bg-paper); color: var(--ink);
+            font-family: 'Cormorant Garamond', serif; padding: 40px 20px;
+            max-width: 600px; margin: 0 auto; text-align: center;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+        h1 { font-family: 'Pinyon Script', cursive; font-size: 3rem; margin-bottom: 10px; }
+        .big-number { font-size: 5rem; font-weight: bold; border-bottom: 3px double var(--ink); display: inline-block; padding: 0 20px; margin: 20px 0; }
+        .stat-label { text-transform: uppercase; letter-spacing: 2px; }
+        
+        .oracle-section { margin-top: 60px; padding: 40px; border: 1px solid var(--ink); position: relative; }
+        .oracle-btn {
+            background: var(--ink); color: var(--bg-paper); border: none; padding: 15px 30px;
+            font-family: inherit; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; margin-top: 20px; transition: transform 0.2s;
+        }
+        .oracle-btn:hover { transform: scale(1.05); }
+
+        .tag-list { text-align: left; margin-top: 40px; }
+        .tag-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--ink); padding: 5px 0; }
+        
+        .nav-back { display: block; margin-top: 50px; color: var(--ink); text-decoration: none; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>The Census</h1>
+    <div class="stat-label">Total Specimens Archived</div>
+    <div class="big-number">{{ count }}</div>
+
+    <div class="tag-list">
+        <h3>Dominant Categories</h3>
+        {% for tag, num in tag_counts %}
+        <div class="tag-row">
+            <span>{{ tag }}</span>
+            <span>{{ num }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="oracle-section">
+        <h1>The Oracle</h1>
+        <p>Unsure of today's attire? Let the spirits decide.</p>
+        <a href="/oracle"><button class="oracle-btn">Consult the Oracle</button></a>
+    </div>
+
+    <a href="/" class="nav-back">Return to Collection</a>
+</body>
+</html>

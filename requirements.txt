@@ -2,3 +2,4 @@ Flask
 rembg[cli]
 Pillow
 waitress
+colorgram.py

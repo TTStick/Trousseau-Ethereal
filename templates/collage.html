@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Canvas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-paper: #f4ecd8; --ink: #2c2c2c; }
+        body {
+            background-color: var(--bg-paper); color: var(--ink); margin: 0; overflow: hidden;
+            font-family: 'Cormorant Garamond', serif;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+        
+        #canvas-area {
+            width: 100vw; height: 70vh; position: relative;
+            border-bottom: 3px double var(--ink);
+        }
+        
+        .canvas-item {
+            position: absolute; width: 150px; cursor: move;
+            filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.1));
+            mix-blend-mode: multiply; transition: transform 0.1s;
+        }
+        .canvas-item:active { transform: scale(1.05); }
+
+        #drawer {
+            height: 30vh; overflow-x: auto; white-space: nowrap; padding: 10px;
+            background: rgba(255,255,255,0.3);
+        }
+        .drawer-item {
+            display: inline-block; width: 100px; margin-right: 10px;
+            border: 1px solid var(--ink); cursor: pointer;
+        }
+        .drawer-item img { width: 100%; display: block; mix-blend-mode: multiply; }
+        
+        h1 { position: absolute; top: 10px; left: 20px; margin: 0; font-family: 'Pinyon Script'; pointer-events: none; opacity: 0.5; }
+        .help { position: absolute; top: 20px; right: 20px; font-style: italic; opacity: 0.7; pointer-events: none; }
+        .back { position: absolute; bottom: 32vh; right: 20px; text-decoration: none; color: var(--ink); font-weight: bold; z-index: 100;}
+    </style>
+</head>
+<body>
+    <div id="canvas-area">
+        <h1>The Moodboard</h1>
+        <div class="help">Tap items below to add. Drag to arrange. Double tap to remove.</div>
+    </div>
+    
+    <a href="/" class="back">Finish & Return</a>
+
+    <div id="drawer">
+        {% for item in clothes %}
+        <div class="drawer-item" onclick="addToCanvas('{{ url_for('static', filename=item.image) }}')">
+            <img src="{{ url_for('static', filename=item.image) }}">
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // 简单的触摸拖拽逻辑
+        function addToCanvas(src) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'canvas-item';
+            img.style.left = (Math.random() * 50 + 20) + '%';
+            img.style.top = (Math.random() * 50 + 10) + '%';
+            
+            // 简单的拖拽实现
+            let isDragging = false;
+            
+            img.addEventListener('mousedown', startDrag);
+            img.addEventListener('touchstart', startDrag, {passive: false});
+            
+            // 双击删除
+            img.addEventListener('dblclick', function() { this.remove(); });
+
+            document.getElementById('canvas-area').appendChild(img);
+        }
+
+        function startDrag(e) {
+            e.preventDefault();
+            let item = e.target;
+            let startX = (e.pageX || e.touches[0].pageX) - item.offsetLeft;
+            let startY = (e.pageY || e.touches[0].pageY) - item.offsetTop;
+
+            function moveDrag(e) {
+                item.style.left = ((e.pageX || e.touches[0].pageX) - startX) + 'px';
+                item.style.top = ((e.pageY || e.touches[0].pageY) - startY) + 'px';
+            }
+
+            function stopDrag() {
+                document.removeEventListener('mousemove', moveDrag);
+                document.removeEventListener('mouseup', stopDrag);
+                document.removeEventListener('touchmove', moveDrag);
+                document.removeEventListener('touchend', stopDrag);
+            }
+
+            document.addEventListener('mousemove', moveDrag);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', moveDrag, {passive: false});
+            document.addEventListener('touchend', stopDrag);
+        }
+    </script>
+</body>
+</html>

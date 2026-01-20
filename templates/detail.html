@@ -3,132 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Item Detail</title>
+    <title>Specimen Detail</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-paper: #f4ecd8;
-            --ink: #2c2c2c;
-            /* 定义一个深一点的复古红，像干涸的火漆印 */
-            --danger: #8a2c2c; 
-        }
+        :root { --bg-paper: #f4ecd8; --ink: #2c2c2c; --danger: #8a2c2c; }
         body {
-            background-color: var(--bg-paper);
-            color: var(--ink);
-            font-family: 'Cormorant Garamond', serif;
-            margin: 0;
-            padding: 20px;
+            background-color: var(--bg-paper); color: var(--ink);
+            font-family: 'Cormorant Garamond', serif; margin: 0; padding: 20px 20px 100px;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto 80px; 
-            border-left: 1px solid var(--ink); 
-            padding-left: 20px;
-            animation: fadeIn 1s ease-in;
-        }
-
+        .container { max-width: 600px; margin: 0 auto; border-left: 1px solid var(--ink); padding-left: 20px; }
+        
         .photo-wrapper {
-            width: 100%;
-            border: 4px double var(--ink); 
-            padding: 15px;
-            box-sizing: border-box;
-            margin-bottom: 30px;
-            opacity: 0;
-            animation: revealPhoto 1.5s ease-out forwards 0.5s;
+            width: 100%; border: 4px double var(--ink); padding: 15px; box-sizing: border-box;
+            margin-bottom: 20px; animation: fadeIn 1s;
+        }
+        .photo-wrapper img { width: 100%; display: block; mix-blend-mode: multiply; }
+
+        /* 色卡 */
+        .palette { display: flex; margin-bottom: 30px; border-bottom: 1px solid var(--ink); padding-bottom: 10px; }
+        .swatch { width: 30px; height: 30px; margin-right: 10px; border: 1px solid var(--ink); border-radius: 50%; }
+        .hex-code { font-size: 0.8rem; line-height: 30px; font-family: monospace; opacity: 0.6; }
+
+        .section { margin-bottom: 40px; }
+        .label { font-family: 'Pinyon Script', cursive; font-size: 2rem; margin-bottom: 10px; border-bottom: 1px solid var(--ink); display: inline-block; }
+        
+        /* 标签 */
+        .tags-display { margin-bottom: 10px; }
+        .tag-stamp { 
+            display: inline-block; border: 1px solid var(--ink); padding: 2px 8px; 
+            margin-right: 5px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+            border-radius: 4px; background: rgba(0,0,0,0.02);
+        }
+        input.retro-input {
+            background: transparent; border: none; border-bottom: 1px dashed var(--ink);
+            color: var(--ink); font-family: inherit; font-size: 1rem; width: 100%; outline: none;
         }
 
-        .photo-wrapper img {
-            width: 100%;
-            display: block;
-            mix-blend-mode: multiply; 
-        }
+        /* 借阅卡记录 */
+        .log-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 10px; }
+        .log-table td { border-bottom: 1px solid rgba(44,44,44,0.3); padding: 5px 0; }
+        .log-date { font-family: monospace; }
+        
+        .btn-text { background: none; border: 1px solid var(--ink); cursor: pointer; font-family: inherit; text-transform: uppercase; font-size: 0.8rem; padding: 5px 10px; margin-top: 10px; }
 
-        .label {
-            font-family: 'Pinyon Script', cursive;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--ink);
-            display: inline-block;
-        }
-
-        .note-content {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            font-style: italic;
-            min-height: 100px;
-        }
-
-        /* --- 底部控制栏 --- */
         .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 70px;
-            border-top: 3px double var(--ink);
-            background: var(--bg-paper);
-            display: flex;
-            justify-content: space-between; /* 左右分布 */
-            align-items: center;
-            padding: 0 40px; /* 增加内边距 */
-            box-sizing: border-box;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            border-top: 3px double var(--ink); background: var(--bg-paper);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-sizing: border-box;
         }
+        .nav-btn { text-decoration: none; color: var(--ink); text-transform: uppercase; letter-spacing: 2px; font-weight: bold; font-size: 0.9rem; }
+        .delete-btn { color: var(--danger); border-bottom: 1px dashed var(--danger); cursor: pointer; }
         
-        .nav-btn {
-            text-decoration: none;
-            color: var(--ink);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        /* 删除按钮样式 */
-        .delete-btn {
-            color: var(--danger);
-            font-size: 0.8rem;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-            cursor: pointer;
-            border-bottom: 1px dashed var(--danger); /* 虚线底边，像要撕掉 */
-        }
-        
-        .delete-btn:hover {
-            opacity: 1;
-            border-bottom-style: solid;
-        }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes revealPhoto {
-            from { opacity: 0; transform: scale(0.98); filter: blur(5px); }
-            to { opacity: 1; transform: scale(1); filter: blur(0); }
-        }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="photo-wrapper">
-            <img src="{{ url_for('static', filename=item.image) }}" alt="Detail">
+            <img src="{{ url_for('static', filename=item.image) }}">
         </div>
 
-        <div>
-            <div class="label">Curator's Note</div>
-            <p class="note-content">
-                {{ item.note if item.note else "No remarks recorded for this specimen." }}
-            </p>
+        <div class="palette">
+            {% for color in item.colors %}
+            <div class="swatch" style="background-color: {{ color }};"></div>
+            {% endfor %}
+            <span class="hex-code">PIGMENT ANALYSIS</span>
         </div>
+
+        <form action="/update_item/{{ item.id }}" method="POST">
+            <div class="section">
+                <div class="label">Curator's Note</div>
+                <p style="font-style: italic;">{{ item.note if item.note else "No remarks." }}</p>
+            </div>
+
+            <div class="section">
+                <div class="label">Taxonomy Tags</div>
+                <div class="tags-display">
+                    {% for tag in item.tags %}
+                    <span class="tag-stamp">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                <input type="text" name="tags_input" class="retro-input" placeholder="Edit tags (e.g. Silk, Summer, Vintage)..." value="{{ item.tags|join(', ') }}">
+                <button type="submit" class="btn-text">Update Taxonomy</button>
+            </div>
+
+            <div class="section">
+                <div class="label">Usage Chronicle</div>
+                <table class="log-table">
+                    {% for log in item.logs %}
+                    <tr>
+                        <td class="log-date">{{ log }}</td>
+                        <td>Worn</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <div style="margin-top: 10px;">
+                    <input type="date" name="new_log_date" class="retro-input" style="width: 150px;">
+                    <button type="submit" class="btn-text">Log Wear</button>
+                </div>
+            </div>
+        </form>
     </div>
 
     <div class="bottom-bar">
         <a href="/" class="nav-btn">← Collection</a>
-        
-        <a href="/delete/{{ item.id }}" class="nav-btn delete-btn" onclick="return confirm('Are you certain you wish to discard this specimen? This action is irreversible.')">
-            Discard Specimen
-        </a>
+        <a href="/delete/{{ item.id }}" class="nav-btn delete-btn" onclick="return confirm('Discard this specimen?')">Discard</a>
     </div>
-
 </body>
 </html>
